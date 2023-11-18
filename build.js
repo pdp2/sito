@@ -8,7 +8,7 @@ pageFiles.forEach(fileName => {
     const content = getPageContent(fileName);
     const page = pageTemplate.replace('{{title}}', getPageTitle()).replace('{{content}}', content);
 
-    fs.writeFile(`./public/${fileName.replace('.md', '.html')}`, page, err => {
+    fs.writeFile(`./docs/${fileName.replace('.md', '.html')}`, page, err => {
         if (err) {
             console.log(err);
         }
