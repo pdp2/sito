@@ -1,7 +1,8 @@
 {
+  "type": "module",
   "scripts": {
-    "test": "jest",
-    "build": "node build"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "build": "node ./scripts/build"
   },
   "devDependencies": {
     "jest": "^29.7.0"
