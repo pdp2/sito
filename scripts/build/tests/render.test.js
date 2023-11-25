@@ -6,12 +6,12 @@ const pageSnapshot = readFileSync('./scripts/build/tests/page.snapshot.html', { 
 const postSnapshot = readFileSync('./scripts/build/tests/post.snapshot.html', { encoding: 'utf-8' });
 
 jest.unstable_mockModule('node:fs', () => ({
-    writeFile: jest.fn(),
+    writeFileSync: jest.fn(),
     readFileSync: jest.fn((filePath) => {
-        if (filePath === './posts/test.html') {
+        if (filePath === './posts/test.md') {
             return 'A test headline for a post';
         }
-        else if (filePath === './pages/test.html') {
+        else if (filePath === './pages/test.md') {
             return 'A test headline for a page';
         }
         else if (filePath === './src/templates/page.template.html') {
@@ -21,18 +21,30 @@ jest.unstable_mockModule('node:fs', () => ({
     readdirSync: jest.fn()
 }));
 
-const { writeFile } = await import('node:fs');
+const { writeFileSync } = await import('node:fs');
 const { render } = await import('../render');
 
-test('Test', () => {
-    render({fileName: 'test.html', type: 'page'});
-    expect(writeFile.mock.calls[0][0]).toBe('./docs/test.html');
-    expect(writeFile.mock.calls[0][1]).toBe(pageSnapshot);
+beforeEach(() => {
+    jest.clearAllMocks();
 });
 
-test('Test', () => {
-    render({fileName: 'test.html', type: 'post'});
-    expect(writeFile.mock.calls[1][0]).toBe('./docs/blog/test.html');
-    expect(writeFile.mock.calls[1][1]).toBe(postSnapshot);
+test('When rendering a page; the resulting file should be written in the correct location', () => {
+    render('./pages/test.md');
+    expect(writeFileSync.mock.calls[0][0]).toBe('./docs/test.html');
+});
+
+test('When rendering a post; the resulting file should be written in the correct location', () => {
+    render('./posts/test.md');
+    expect(writeFileSync.mock.calls[0][0]).toBe('./docs/test.html');
+});
+
+test('The rendered page output should match the snapshot', () => {
+    render('./pages/test.md');
+    expect(writeFileSync.mock.calls[0][1]).toBe(pageSnapshot);
+});
+
+test('The rendered post output should match the snapshot', () => {
+    render('./posts/test.md');
+    expect(writeFileSync.mock.calls[0][1]).toBe(postSnapshot);
 });
 
