@@ -1,22 +1,22 @@
 import { writeFileSync, readFileSync } from 'node:fs';
 import { parseHeadings } from '../../src/parser/parseHeadings.js';
 import { parseParagraphs } from '../../src/parser/parseParagraphs.js';
-import { inTagRegExp } from './regexp.js';
+import { inTagRegExp, h1RegExp } from './regexp.js';
 
 const template = readFileSync('./src/templates/page.template.html', 'utf8');
 
 export function render(filePath) {
     const outputFilePath = getOutputFilePath(filePath);
-    const content = getFileContent(filePath);
-    const output = template.replace('{{title}}', getPageTitle()).replace('{{content}}', content);
+    const fileContent = readFileSync(filePath, 'utf-8');
+    const content = getParsedContent(fileContent);
+    const output = template.replace('{{title}}', getPageTitle(fileContent)).replace('{{content}}', content);
 
     writeFileSync(outputFilePath, output);
 }
 
-function getFileContent(filePath) {
+function getParsedContent(fileContent) {
     const numOfSpaces = 4;
-    const fileContents = readFileSync(filePath, 'utf-8');
-    const lines = fileContents.split('\n');
+    const lines = fileContent.split('\n');
     const parsedLines = lines.map(line => {
         // If empty string return, we don't want unnecessary p tag
         if (typeof line === 'string' && !line) {
@@ -36,8 +36,16 @@ function getFileContent(filePath) {
     return parsedLines.filter(line => line).join('\n' + getSpaces(numOfSpaces));
 }
 
-function getPageTitle() {``
-    return 'A title...';
+function getPageTitle(fileContent) {
+    const mainHeadingMatch = fileContent.match(h1RegExp);
+    let title = 'Paolo Di Pasquale\'s blog';
+    let pageTitle = mainHeadingMatch && mainHeadingMatch[1] ? mainHeadingMatch[1] : '';
+
+    if (pageTitle) {
+        title = pageTitle + ' | ' + title;
+    }
+
+    return title;
 }
 
 function getOutputFilePath(filePath) {

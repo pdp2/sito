@@ -1,4 +1,4 @@
-const h1RegExp = /#\s+(.+)/;
+import { h1RegExp } from '../../scripts/build/regexp.js';
 
 export function parseHeadings(string) {
     if (isHeading(string)) {
