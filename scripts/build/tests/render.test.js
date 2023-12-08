@@ -9,10 +9,10 @@ jest.unstable_mockModule('node:fs', () => ({
     writeFileSync: jest.fn(),
     readFileSync: jest.fn((filePath) => {
         if (filePath === './posts/test.md') {
-            return 'A test headline for a post';
+            return '# A test headline for a post\nSomething to say? Write it on this post!';
         }
         else if (filePath === './pages/test.md') {
-            return 'A test headline for a page';
+            return '# A test headline for a page\nSomething to say? Write it on this page!';
         }
         else if (filePath === './src/templates/page.template.html') {
             return template;
