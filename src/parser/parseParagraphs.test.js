@@ -1,4 +1,4 @@
-import { parseParagraphs } from "./parseParagraphs.js";
+import { parseParagraphs } from "#src/parser/parseParagraphs.js";
 
 test('Parse paragraphs', () => {
     expect(parseParagraphs('Got something to say.')).toBe('<p>Got something to say.</p>');

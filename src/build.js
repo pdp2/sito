@@ -1,5 +1,5 @@
 import { readdirSync } from 'node:fs';
-import { render } from './render.js';
+import { render } from '#src/render.js';
 
 const pageFolderPath = './pages/';
 const postFolderPath = './posts/';

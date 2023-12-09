@@ -1,8 +1,11 @@
 {
   "type": "module",
+  "imports": {
+    "#src/*.js": "./src/*.js"
+  },
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "build": "node ./scripts/build"
+    "build": "node ./src/build.js"
   },
   "devDependencies": {
     "jest": "^29.7.0"

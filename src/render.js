@@ -1,7 +1,7 @@
 import { writeFileSync, readFileSync } from 'node:fs';
-import { parseHeadings } from '../../src/parser/parseHeadings.js';
-import { parseParagraphs } from '../../src/parser/parseParagraphs.js';
-import { inTagRegExp, h1RegExp } from './regexp.js';
+import { parseHeadings } from '#src/parser/parseHeadings.js';
+import { parseParagraphs } from '#src/parser/parseParagraphs.js';
+import { inTagRegExp, h1RegExp } from '#src/regexp.js';
 
 const template = readFileSync('./src/templates/page.template.html', 'utf8');
 

@@ -1,4 +1,4 @@
-import { inTagRegExp } from '../../scripts/build/regexp.js';
+import { inTagRegExp } from '#src/regexp.js';
 export function parseParagraphs(string) {
     if (isParagraph(string)) {
         return '<p>' + string + '</p>';
