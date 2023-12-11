@@ -1,11 +1,15 @@
-import { writeFileSync, readFileSync } from 'node:fs';
+import { readdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { parseHeadings } from '#src/parser/parseHeadings.js';
 import { parseParagraphs } from '#src/parser/parseParagraphs.js';
-import { inTagRegExp, h1RegExp } from '#src/regexp.js';
+import { inTagRegExp, h1RegExp } from '#src/constants/regexp.js';
 
+const postFolderPath = './posts/';
+const postFiles = readdirSync(postFolderPath) || [];
 const template = readFileSync('./src/templates/page.template.html', 'utf8');
 
-export function render(filePath) {
+postFiles.forEach(fileName => build(postFolderPath + fileName));
+
+export function build(filePath) {
     const outputFilePath = getOutputFilePath(filePath);
     const fileContent = readFileSync(filePath, 'utf-8');
     const content = getParsedContent(fileContent);

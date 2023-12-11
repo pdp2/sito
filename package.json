@@ -5,7 +5,7 @@
   },
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "build": "node ./src/build.js"
+    "build": "node ./src/build/index.js"
   },
   "devDependencies": {
     "jest": "^29.7.0"
