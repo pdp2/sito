@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A test headline for a page | Paolo Di Pasquale's blog</title>
+    <title>{{title}}</title>
 </head>
 <body>
-    <h1>A test headline for a page</h1>
-    <p>Something to say? Write it on this page!</p>
+    <h1>Index</h1>
+    <ul>
+        {{ #links }}
+        <li><a href="{{url}}">{{anchorText}}</a></li>
+        {{ /links }}
+    </ul>
 </body>
 </html>
