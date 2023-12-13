@@ -14,7 +14,7 @@ if (!runningTests) {
 export function build() {
     const postFolderPath = './posts/';
     const postFiles = readdirSync(postFolderPath) || [];
-    const template = readFileSync('./src/templates/page.template.html', 'utf8');
+    const template = readFileSync('./src/templates/post.template.html', 'utf8');
     postFiles.forEach(fileName => buildPage(postFolderPath + fileName, template));
 
     buildIndex();

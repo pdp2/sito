@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import { readFileSync } from 'node:fs';
 
 const indexTemplate = readFileSync('./src/templates/index.template.html', { encoding: 'utf-8' });
-const pageTemplate = readFileSync('./src/templates/page.template.html', { encoding: 'utf-8' });
+const postTemplate = readFileSync('./src/templates/post.template.html', { encoding: 'utf-8' });
 const indexSnapshot = readFileSync('./src/build/tests/index.snapshot.html', { encoding: 'utf-8' });
 const postSnapshot = readFileSync('./src/build/tests/post.snapshot.html', { encoding: 'utf-8' });
 
@@ -15,8 +15,8 @@ jest.unstable_mockModule('node:fs', () => ({
         else if (filePath === './posts/another.md') {
             return '# A test headline for another post\nSomething to say? Write it on this post!';
         }
-        else if (filePath === './src/templates/page.template.html') {
-            return pageTemplate;
+        else if (filePath === './src/templates/post.template.html') {
+            return postTemplate;
         }
         else if (filePath === './src/templates/index.template.html') {
             return indexTemplate;
