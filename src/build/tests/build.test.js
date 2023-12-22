@@ -21,6 +21,9 @@ jest.unstable_mockModule('node:fs', () => ({
         else if (filePath === './src/templates/index.template.html') {
             return indexTemplate;
         }
+        else {
+            throw new Error(filePath + ' was not found!');
+        }
     }),
     readdirSync: jest.fn(() => {
         return ['test.md', 'another.md'];

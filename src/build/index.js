@@ -11,13 +11,15 @@ if (!runningTests) {
     build();
 }
 
-export function build() {
+export async function build() {
     const postFolderPath = './posts/';
     const postFiles = readdirSync(postFolderPath) || [];
     const template = readFileSync('./src/templates/post.template.html', 'utf8');
     postFiles.forEach(fileName => buildPage(postFolderPath + fileName, template));
 
-    buildIndex();
+    const indexFilePath = './docs/index.html';
+    const indexTemplate = readFileSync('./src/templates/index.template.html', 'utf8');
+    buildPage(indexFilePath, indexTemplate, { isIndex: true });
 }
 
 export function isAlreadyInTag(string) {
@@ -28,25 +30,20 @@ export function resetIndexCache() {
     indexOfPosts = [];
 }
 
-function buildIndex() {
-    const outputFilePath = './docs/index.html';
-    const template = readFileSync('./src/templates/index.template.html', 'utf8');
-    const output = sections(template.replace('{{title}}', getPageTitle('')), {
-        links: indexOfPosts.map(item => ({url: getUrl(item), anchorText: getAnchorText(item)}))
-    });
+function buildPage(filePath, template, { isIndex } = {}) {
+    const outputFilePath = isIndex ? filePath : getOutputFilePath(filePath);
+    const fileContent = isIndex ? '' : readFileSync(filePath, 'utf-8');
+    const content = isIndex ? '' : getParsedContent(fileContent);
+    let output = template
+        .replace('{{title}}', getPageTitle(fileContent))
+        .replace('{{content}}', content)
+        .replace('<sito-styles></sito-styles>', getPageStyles());
 
-    writeFileSync(outputFilePath, output);
-
-    if (!runningTests) {
-        console.log('\nBuilt: ' + outputFilePath + '\n');
+    if (isIndex) {
+        output = sections(output, {
+            links: indexOfPosts.map(item => ({url: getUrl(item), anchorText: getAnchorText(item)}))
+        });
     }
-}
-
-function buildPage(filePath, template) {
-    const outputFilePath = getOutputFilePath(filePath);
-    const fileContent = readFileSync(filePath, 'utf-8');
-    const content = getParsedContent(fileContent);
-    const output = template.replace('{{title}}', getPageTitle(fileContent)).replace('{{content}}', content);
 
     writeFileSync(outputFilePath, output);
 
@@ -65,6 +62,11 @@ function getAnchorText(item) {
     }
 
     return item;
+}
+
+function getPageStyles() {
+    const globalStylesFile = readFileSync('./src/styles/global.css', 'utf8');
+    return globalStylesFile;
 }
 
 function getParsedContent(fileContent) {
