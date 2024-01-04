@@ -35,16 +35,12 @@ function buildPage(filePath, template, { isIndex } = {}) {
     const outputFilePath = isIndex ? filePath : getOutputFilePath(filePath);
     const fileContent = isIndex ? '' : readFileSync(filePath, 'utf-8');
     const content = isIndex ? '' : getParsedContent(fileContent);
+    const links = getPageLinks(isIndex);
     let output = template
         .replace('{{title}}', getPageTitle(fileContent))
         .replace('{{content}}', content)
-        .replace('<sito-styles></sito-styles>', getPageStyles());
-
-    if (isIndex) {
-        output = sections(output, {
-            links: indexOfPosts.map(item => ({url: getUrl(item), anchorText: getAnchorText(item)}))
-        });
-    }
+        .replace('<sito-styles></sito-styles>', getPageStyles())
+        .replace('<sito-header></sito-header>', getPageHeader(links));
 
     writeFileSync(outputFilePath, output);
 
@@ -62,13 +58,35 @@ function getAnchorText(item) {
     return item.title;
 }
 
+function getPageHeader(links) {
+    const template = readFileSync('./src/templates/components/header.template.html', 'utf8');
+    // Format template to included indentations
+    let output = template.replace(/\n+/g, `$&${getSpaces(4)}`);
+    
+    return sections(output, {
+        links
+    });
+}
+
+function getPageLinks(isIndex) {
+    const links = indexOfPosts.map(item => ({url: getUrl(item), anchorText: getAnchorText(item)}))
+    if (isIndex) {
+        return links;
+    }
+
+    return [{
+        anchorText: 'Home',
+        url: '/'
+    }];
+}
+
 function getPageStyles() {
     const globalStylesFile = readFileSync('./src/styles/global.css', 'utf8');
     return `<style id="global">\n${globalStylesFile}\n${getSpaces(4)}</style>`;
 }
 
 function getParsedContent(fileContent) {
-    const numOfSpaces = 4;
+    const numOfSpaces = 8;
     const lines = fileContent.split('\n');
     const parsedLines = lines.map(line => {
         // If empty string return, we don't want unnecessary p tag
