@@ -1,3 +1,4 @@
+/* Sections concept borrowed from https://github.com/janl/mustache.js */
 export function sections(template, data) {
     const fields = Object.keys(data);
     let output = '';

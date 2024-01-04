@@ -10,5 +10,5 @@ const data = [
 ];
 
 test('Interpolate sections', () => {
-    expect(sections(sectionTemplate, { sections: data })).toBe(sectionSnapshot);
+    expect(sections(sectionTemplate, { items: data })).toBe(sectionSnapshot);
 });

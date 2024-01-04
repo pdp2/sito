@@ -3,6 +3,7 @@ import { parseHeadings } from '#src/parser/parseHeadings.js';
 import { parseParagraphs } from '#src/parser/parseParagraphs.js';
 import { inTagRegExp, h1RegExp } from '#src/constants/regexp.js';
 import { sections } from '#src/interpolator/sections.js';
+import { getSpaces } from "#src/utils/getSpaces.js";
 
 const runningTests = process.env.NODE_ENV === 'test';
 let indexOfPosts = [];
@@ -11,7 +12,7 @@ if (!runningTests) {
     build();
 }
 
-export async function build() {
+export function build() {
     const postFolderPath = './posts/';
     const postFiles = readdirSync(postFolderPath) || [];
     const template = readFileSync('./src/templates/post.template.html', 'utf8');
@@ -47,7 +48,10 @@ function buildPage(filePath, template, { isIndex } = {}) {
 
     writeFileSync(outputFilePath, output);
 
-    indexOfPosts.push(outputFilePath);
+    indexOfPosts.push({
+        path: outputFilePath,
+        title: getPageTitle(fileContent).split(' | ')[0]
+    });
 
     if (!runningTests) {
         console.log('\nBuilt: ' + outputFilePath + '\n');
@@ -55,18 +59,12 @@ function buildPage(filePath, template, { isIndex } = {}) {
 }
 
 function getAnchorText(item) {
-    const matches = item.match(/\.\/docs\/(.+)\.html/)
-
-    if (matches) {
-        return matches[1].charAt(0).toUpperCase() + matches[1].substring(1);
-    }
-
-    return item;
+    return item.title;
 }
 
 function getPageStyles() {
     const globalStylesFile = readFileSync('./src/styles/global.css', 'utf8');
-    return globalStylesFile;
+    return `<style id="global">\n${globalStylesFile}\n${getSpaces(4)}</style>`;
 }
 
 function getParsedContent(fileContent) {
@@ -95,7 +93,7 @@ function getParsedContent(fileContent) {
 
 function getPageTitle(fileContent) {
     const mainHeadingMatch = fileContent.match(h1RegExp);
-    let title = 'Paolo Di Pasquale\'s blog';
+    let title = 'Paolo Di Pasquale';
     let pageTitle = mainHeadingMatch && mainHeadingMatch[1] ? mainHeadingMatch[1] : '';
 
     if (pageTitle) {
@@ -110,16 +108,6 @@ function getOutputFilePath(filePath) {
     return './docs/' + fileName + '.html';
 }
 
-function getSpaces(numOfSpaces) {
-    let output = '';
-
-    for (let i=0; i<numOfSpaces; i++) {
-        output += ' ';
-    }
-
-    return output;
-}
-
 function getUrl(item) {
-    return item.replace('docs/', '');
+    return item.path.replace('docs/', '');
 }
