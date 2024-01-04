@@ -4,6 +4,7 @@ import { getSpaces } from "#src/utils/getSpaces.js";
 
 const indexTemplate = readFileSync('./src/templates/index.template.html', { encoding: 'utf-8' });
 const postTemplate = readFileSync('./src/templates/post.template.html', { encoding: 'utf-8' });
+const headerTemplate = readFileSync('./src/templates/components/header.template.html', { encoding: 'utf-8' });
 const indexSnapshot = readFileSync('./src/build/tests/index.snapshot.html', { encoding: 'utf-8' });
 const postSnapshot = readFileSync('./src/build/tests/post.snapshot.html', { encoding: 'utf-8' });
 
@@ -24,6 +25,9 @@ jest.unstable_mockModule('node:fs', () => ({
         }
         else if (filePath === './src/templates/index.template.html') {
             return indexTemplate;
+        }
+        else if (filePath === './src/templates/components/header.template.html') {
+            return headerTemplate;
         }
         else if (filePath === './src/styles/global.css') {
             return `${getSpaces(8)}body {\n${getSpaces(12)}font-family: sans-serif;\n${getSpaces(8)}}`;
