@@ -1,0 +1,10 @@
+body {
+    /* Font stack Geometric Humanist from https://modernfontstacks.com/#font-stacks */
+    font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+    line-height: 1.75;
+}
+
+input, select, textarea {
+    font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+    font-size: 1rem;
+}

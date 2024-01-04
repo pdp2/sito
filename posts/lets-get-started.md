@@ -1,4 +1,4 @@
-# Let's get started
+# Let&apos;s get started
 
 Like a lot of the times that I am prompted into action, I reacted to a deadline that was imposed on me. My current hosting provider contacted me to explain that my subscription would be automatically renewed in December to the tune of just under a couple of hundred quid for the year 😱.
 

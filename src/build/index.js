@@ -3,6 +3,7 @@ import { parseHeadings } from '#src/parser/parseHeadings.js';
 import { parseParagraphs } from '#src/parser/parseParagraphs.js';
 import { inTagRegExp, h1RegExp } from '#src/constants/regexp.js';
 import { sections } from '#src/interpolator/sections.js';
+import { getSpaces } from "#src/utils/getSpaces.js";
 
 const runningTests = process.env.NODE_ENV === 'test';
 let indexOfPosts = [];
@@ -17,7 +18,9 @@ export function build() {
     const template = readFileSync('./src/templates/post.template.html', 'utf8');
     postFiles.forEach(fileName => buildPage(postFolderPath + fileName, template));
 
-    buildIndex();
+    const indexFilePath = './docs/index.html';
+    const indexTemplate = readFileSync('./src/templates/index.template.html', 'utf8');
+    buildPage(indexFilePath, indexTemplate, { isIndex: true });
 }
 
 export function isAlreadyInTag(string) {
@@ -28,29 +31,27 @@ export function resetIndexCache() {
     indexOfPosts = [];
 }
 
-function buildIndex() {
-    const outputFilePath = './docs/index.html';
-    const template = readFileSync('./src/templates/index.template.html', 'utf8');
-    const output = sections(template.replace('{{title}}', getPageTitle('')), {
-        links: indexOfPosts.map(item => ({url: getUrl(item), anchorText: getAnchorText(item)}))
-    });
+function buildPage(filePath, template, { isIndex } = {}) {
+    const outputFilePath = isIndex ? filePath : getOutputFilePath(filePath);
+    const fileContent = isIndex ? '' : readFileSync(filePath, 'utf-8');
+    const content = isIndex ? '' : getParsedContent(fileContent);
+    let output = template
+        .replace('{{title}}', getPageTitle(fileContent))
+        .replace('{{content}}', content)
+        .replace('<sito-styles></sito-styles>', getPageStyles());
 
-    writeFileSync(outputFilePath, output);
-
-    if (!runningTests) {
-        console.log('\nBuilt: ' + outputFilePath + '\n');
+    if (isIndex) {
+        output = sections(output, {
+            links: indexOfPosts.map(item => ({url: getUrl(item), anchorText: getAnchorText(item)}))
+        });
     }
-}
-
-function buildPage(filePath, template) {
-    const outputFilePath = getOutputFilePath(filePath);
-    const fileContent = readFileSync(filePath, 'utf-8');
-    const content = getParsedContent(fileContent);
-    const output = template.replace('{{title}}', getPageTitle(fileContent)).replace('{{content}}', content);
 
     writeFileSync(outputFilePath, output);
 
-    indexOfPosts.push(outputFilePath);
+    indexOfPosts.push({
+        path: outputFilePath,
+        title: getPageTitle(fileContent).split(' | ')[0]
+    });
 
     if (!runningTests) {
         console.log('\nBuilt: ' + outputFilePath + '\n');
@@ -58,13 +59,12 @@ function buildPage(filePath, template) {
 }
 
 function getAnchorText(item) {
-    const matches = item.match(/\.\/docs\/(.+)\.html/)
+    return item.title;
+}
 
-    if (matches) {
-        return matches[1].charAt(0).toUpperCase() + matches[1].substring(1);
-    }
-
-    return item;
+function getPageStyles() {
+    const globalStylesFile = readFileSync('./src/styles/global.css', 'utf8');
+    return `<style id="global">\n${globalStylesFile}\n${getSpaces(4)}</style>`;
 }
 
 function getParsedContent(fileContent) {
@@ -93,7 +93,7 @@ function getParsedContent(fileContent) {
 
 function getPageTitle(fileContent) {
     const mainHeadingMatch = fileContent.match(h1RegExp);
-    let title = 'Paolo Di Pasquale\'s blog';
+    let title = 'Paolo Di Pasquale';
     let pageTitle = mainHeadingMatch && mainHeadingMatch[1] ? mainHeadingMatch[1] : '';
 
     if (pageTitle) {
@@ -108,16 +108,6 @@ function getOutputFilePath(filePath) {
     return './docs/' + fileName + '.html';
 }
 
-function getSpaces(numOfSpaces) {
-    let output = '';
-
-    for (let i=0; i<numOfSpaces; i++) {
-        output += ' ';
-    }
-
-    return output;
-}
-
 function getUrl(item) {
-    return item.replace('docs/', '');
+    return item.path.replace('docs/', '');
 }
