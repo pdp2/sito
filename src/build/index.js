@@ -63,9 +63,7 @@ function getPageHeader(links) {
     // Format template to included indentations
     let output = template.replace(/\n+/g, `$&${getSpaces(4)}`);
     
-    return sections(output, {
-        links
-    });
+    return output;
 }
 
 function getPageLinks(isIndex) {
