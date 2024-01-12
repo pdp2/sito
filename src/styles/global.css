@@ -29,3 +29,7 @@ main {
 .globalHeader a {
     color: #2dfefe;
 }
+
+.postedBy {
+    font-style: italic;
+}
